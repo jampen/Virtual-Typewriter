@@ -18,7 +18,9 @@ void UI::Window_deleter::operator()(WINDOW* window) {
 
 // Impl of line_reader
 
-UI::Line_reader::Line_reader(const int num_columns) {
+UI::Line_reader::Line_reader(const int num_columns)
+    : window(newwin(LINE_HEIGHT, num_columns, 0, 0))
+{
     resize(Size{1, num_columns});
 }
 
@@ -37,7 +39,8 @@ void UI::Line_reader::draw() {
 }
 
 void UI::Line_reader::resize(const UI::Size new_size) {
-
+    wresize(get_window(), new_size.num_rows, new_size.num_columns);
+    wrefresh(get_window());
 }
 
 bool UI::Line_reader::on_key_pressed(const chtype key) {

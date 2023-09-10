@@ -1,6 +1,4 @@
 #include "ui.h"
-#include <sstream>          // for spaced writing
-#include <iomanip> 
 
 void UI::begin() {
     initscr();              // Initialize ncurses
@@ -78,7 +76,6 @@ void UI::Paper::on_line_entered(const std::string& line) {
     }
     // draw paper
     wclear(get_window());
-
 
     long cursor_begin_row = (getmaxy(get_window()) - rows.size());
     if (cursor_begin_row < 0) cursor_begin_row = 0;

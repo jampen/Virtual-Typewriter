@@ -7,7 +7,6 @@ void UI::begin() {
     raw();                  // Characters are passed immediately to our our program
     noecho();               // Don't display the inputted characters as they are typed (we handle it)
     keypad(stdscr, TRUE);   // We want to receive function keys like F1 and F2
-    start_color();
     refresh();
 }
 
@@ -80,30 +79,25 @@ void UI::Paper::on_line_entered(const std::string& line) {
     // draw paper
     wclear(get_window());
 
-    const int cursor_begin_row = getbegy(get_window());
+
+    long cursor_begin_row = (getmaxy(get_window()) - rows.size());
+    if (cursor_begin_row < 0) cursor_begin_row = 0;
+
+    
     wmove(get_window(), cursor_begin_row, 0); 
     
     // Setup colors
-
-    enum {
-        PAIR_LINE_NO=1,
-        PAIR_TEXT
-    };
-
-    init_pair(PAIR_LINE_NO, COLOR_GREEN, COLOR_BLUE);
-    init_pair(PAIR_TEXT, COLOR_GREEN, COLOR_BLUE);
-    
     wrefresh(get_window()); // refresh cursor pos
 
+    
     for (size_t row = row_begin; row < row_end; ++row) {
         const auto& rowstr = rows.at(row);
         const size_t lineno = row+1; // index to line number conversion
-        
-        attron(COLOR_PAIR(PAIR_LINE_NO));
         wprintw(get_window(), "%lu\t", lineno);
         wprintw(get_window(), "%s\n", rowstr.c_str());
     }
-    wrefresh(get_window());
+
+    wrefresh(get_window()); // display to screen
 }
 
 void UI::Paper::resize(const Size new_size) {

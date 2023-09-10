@@ -51,9 +51,6 @@ public:
         reset_cursor();
         wclear(linefeed.get());
         draw_paper();
-
-        // TODO: use views to provide a sliding-up view of the page
-        
     }
 
     bool submit_char(const int ch) {

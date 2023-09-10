@@ -63,6 +63,8 @@ namespace UI {
         std::set<Key_inputtable*> listeners;
     };
 
+    class Line_reader;
+
     class Paper : public Resizeable {
     public:
         static constexpr int PAPER_BEGIN_OFFSET = 1;
@@ -74,8 +76,9 @@ namespace UI {
     private:
         Window window;
         std::vector<std::string> rows;
-        // Cursor cursor;
         Size size;
+        size_t row_begin{};
+        size_t row_end{};
     };
 
     class Line_reader : 

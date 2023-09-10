@@ -66,10 +66,28 @@ UI::Paper::Paper() {
 
 void UI::Paper::on_line_entered(const std::string& line) {
     rows.push_back(line);
+
+    if(true) {
+        if (row_end < rows.size()) {
+            ++row_end;
+        }
+
+        const size_t view_row_diff = row_end - row_begin;
+
+        if (view_row_diff == size.num_rows) {
+            ++row_begin;
+        }
+    }
     // draw paper
     wclear(get_window());
-    for (const auto& row : rows) {
-        wprintw(get_window(), "%s", row.c_str());
+
+    const int cursor_begin_row = getbegy(get_window());
+    wmove(get_window(), cursor_begin_row, 0); 
+    wrefresh(get_window()); // refresh cursor pos
+
+    for (int row = row_begin; row < row_end; ++row) {
+        const auto& rowstr = rows.at(row);
+        wprintw(get_window(), "%s", rowstr.c_str());
     }
     wrefresh(get_window());
 }
@@ -86,6 +104,13 @@ UI::Line_reader::Line_reader(Paper* paper, const int num_columns)
     window(newwin(LINE_HEIGHT, num_columns, 0, 0))
 {
     resize(Size{1, num_columns});
+    // Move the line reader to the bottom of the screen
+    int maxx;
+    int maxy;
+    getmaxyx(stdscr, maxy, maxx);
+    mvwin(get_window(), maxy-LINE_HEIGHT, 0);
+    wmove(get_window(), 0, 0); // reset the cursor
+    wrefresh(get_window()); // to update the cursor pos
 }
 
 std::string UI::Line_reader::read() {

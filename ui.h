@@ -39,7 +39,8 @@ namespace UI {
             listeners.emplace(inputtable);
         }
     
-        inline void remove_listener(Key_inputtable* inputtable) { 
+        inline void remove_listener(Key_inputtable* inputtable) {
+            // find and erase the listener
             auto iter = listeners.find(inputtable);
             if (iter != listeners.end()) {
                 listeners.erase(iter);

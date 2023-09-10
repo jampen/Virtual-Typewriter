@@ -61,16 +61,26 @@ bool UI::Line_reader::on_key_pressed(const chtype key) {
     bool printable = isprint(key);
 
     if(printable) {
+        // Handle inputtable characters
         waddch(get_window(), key);
     }
 
+    bool handled = false;
+    handled |= printable;
+
     switch (key) {
+        // Handle special characters
         case KEY_BACKSPACE:
             waddch(get_window(), '\b');
-        default:
-            wrefresh(get_window());
-            return true;
+            handled |= true;
+    }
+
+    // Only refresh if we made a change
+    if (handled) {
+        wrefresh(get_window());
+        return true;
     }
     
+    // We were unable to handle this key, so move it on to someone else
     return false;
 }

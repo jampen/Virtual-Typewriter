@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <set>
+#include <vector>
 #include <curses.h>
 
 namespace UI {
@@ -62,13 +63,25 @@ namespace UI {
         std::set<Key_inputtable*> listeners;
     };
 
+    class Paper : public Resizeable {
+    public:
+        static constexpr int PAPER_BEGIN_OFFSET = 1;
+        Paper();
+        void on_line_entered(const std::string& line);
+        void resize(const Size new_size) override;
+
+    private:
+        Window window;
+        std::vector<std::string> rows;
+        // Cursor cursor;
+    };
+
     class Line_reader : 
         public Resizeable,
         public Key_inputtable {
     public:
         static constexpr int LINE_HEIGHT = 1;
-
-        Line_reader(const int num_columns = 80);
+        Line_reader(Paper* paper, const int num_columns = 80);
         inline WINDOW* get_window() { return window.get(); } 
         std::string read() const;   // Returns the line as a string, without any colors.
         void clear();               // Clear the line reader to blank
@@ -77,6 +90,7 @@ namespace UI {
     private:
         Window window;
         int num_columns;
+        Paper* paper;
     };
 }
 

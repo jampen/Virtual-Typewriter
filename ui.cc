@@ -55,8 +55,10 @@ void UI::Key_event_loop::listen() {
 
 // Impl of line_reader
 
-UI::Line_reader::Line_reader(const int num_columns)
-    : window(newwin(LINE_HEIGHT, num_columns, 0, 0))
+UI::Line_reader::Line_reader(Paper* paper, const int num_columns)
+: 
+    paper(paper),
+    window(newwin(LINE_HEIGHT, num_columns, 0, 0))
 {
     resize(Size{1, num_columns});
 }
@@ -83,7 +85,7 @@ UI::Key_input_response UI::Line_reader::on_key_pressed(const chtype key) {
     }
 
     // handle special cases, such as backspace
-    bool printable = isprint(key);
+    const bool printable = isprint(key);
 
     if(printable) {
         // Handle inputtable characters

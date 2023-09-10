@@ -5,6 +5,7 @@ void UI::begin() {
     raw();                  // Characters are passed immediately to our our program
     noecho();               // Don't display the inputted characters as they are typed (we handle it)
     keypad(stdscr, TRUE);   // We want to receive function keys like F1 and F2
+    refresh();
 }
 
 void UI::end() {
@@ -56,7 +57,20 @@ void UI::Line_reader::resize(const UI::Size new_size) {
 }
 
 bool UI::Line_reader::on_key_pressed(const chtype key) {
-    waddch(get_window(), key);
-    wrefresh(get_window());
-    return true;
+    // handle special cases, such as backspace
+    bool printable = isprint(key);
+
+    if(printable) {
+        waddch(get_window(), key);
+    }
+
+    switch (key) {
+        case KEY_BACKSPACE:
+            waddch(get_window(), '\b');
+        default:
+            wrefresh(get_window());
+            return true;
+    }
+    
+    return false;
 }

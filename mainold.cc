@@ -80,7 +80,6 @@ public:
         wclear(paper.get());
         wmove(paper.get(),insert_y, 0);
 
-
         wprintw(paper.get(), "[lines %d to %d]\n", view_line_begin, view_line_end);
 
         for (int line_index = view_line_begin; line_index != view_line_end; ++line_index) {

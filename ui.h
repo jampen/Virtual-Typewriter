@@ -28,7 +28,12 @@ namespace UI {
         virtual bool on_key_pressed(const chtype input) = 0;
     };
 
-    class Line_reader : public Resizeable, KeyInputtable {
+    class Drawable {
+    public:
+        virtual void draw() = 0;
+    };
+
+    class Line_reader : public Resizeable, KeyInputtable, Drawable {
     public:
         static constexpr int LINE_HEIGHT = 1;
 
@@ -36,8 +41,7 @@ namespace UI {
         inline WINDOW* get_window() { return window.get(); } 
         std::string read() const;   // Returns the line as a string, without any colors.
         void clear();               // Clear the line reader to blank
-    
-    protected:
+        void draw() override;
         void resize(const Size new_size) override;
         bool on_key_pressed(const chtype key) override;
     private:

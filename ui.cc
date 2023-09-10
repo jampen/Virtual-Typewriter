@@ -32,6 +32,10 @@ void UI::Line_reader::clear() {
 
 // Impl of abstract methods
 
+void UI::Line_reader::draw() {
+    wrefresh(get_window());
+}
+
 void UI::Line_reader::resize(const UI::Size new_size) {
 
 }

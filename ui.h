@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <set>
 #include <curses.h>
 
 namespace UI {
@@ -34,9 +35,16 @@ namespace UI {
     };
 
     class Key_event_loop {
-
+    public:
+        // This function blocks, and sends messages to the Key_inputtables on a key pressed
+        // if the Key_inputtable returns TRUE then the key is considered to be 'consumed'
+        void listen();
+        void add_listener(Key_inputtable* inputtable);
+        void remove_listener(Key_inputtable* inputtable);
+        void clear_listeners();
+    private:
+        std::set<Key_inputtable*> inputtables;
     };
-
 
     class Line_reader : public Resizeable, Key_inputtable, Drawable {
     public:
@@ -50,7 +58,6 @@ namespace UI {
         void resize(const Size new_size) override;
         bool on_key_pressed(const chtype key) override;
     private:
-    
         Window window;
         int num_columns;
     };

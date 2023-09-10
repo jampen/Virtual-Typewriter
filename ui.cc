@@ -1,10 +1,13 @@
 #include "ui.h"
+#include <sstream>          // for spaced writing
+#include <iomanip> 
 
 void UI::begin() {
     initscr();              // Initialize ncurses
     raw();                  // Characters are passed immediately to our our program
     noecho();               // Don't display the inputted characters as they are typed (we handle it)
     keypad(stdscr, TRUE);   // We want to receive function keys like F1 and F2
+    start_color();
     refresh();
 }
 
@@ -36,11 +39,9 @@ void UI::Key_event_loop::listen() {
             if (response == Key_input_response::Refused) {
                 continue;
             }
-
             else if (response == Key_input_response::Accepted) {
                 break;
             }
-
             else if (response == Key_input_response::Submit) {
                 // TODO: impl submit actions
             } else if (response == Key_input_response::Quit) {
@@ -67,27 +68,40 @@ UI::Paper::Paper() {
 void UI::Paper::on_line_entered(const std::string& line) {
     rows.push_back(line);
 
-    if(true) {
-        if (row_end < rows.size()) {
-            ++row_end;
-        }
+    if (row_end < rows.size()) {
+        ++row_end;
+    }
 
-        const size_t view_row_diff = row_end - row_begin;
+    const size_t view_row_diff = row_end - row_begin;
 
-        if (view_row_diff == size.num_rows) {
-            ++row_begin;
-        }
+    if (view_row_diff == size.num_rows) {
+        ++row_begin;
     }
     // draw paper
     wclear(get_window());
 
     const int cursor_begin_row = getbegy(get_window());
     wmove(get_window(), cursor_begin_row, 0); 
+    
+    // Setup colors
+
+    enum {
+        PAIR_LINE_NO=1,
+        PAIR_TEXT
+    };
+
+    init_pair(PAIR_LINE_NO, COLOR_GREEN, COLOR_BLUE);
+    init_pair(PAIR_TEXT, COLOR_GREEN, COLOR_BLUE);
+    
     wrefresh(get_window()); // refresh cursor pos
 
-    for (int row = row_begin; row < row_end; ++row) {
+    for (size_t row = row_begin; row < row_end; ++row) {
         const auto& rowstr = rows.at(row);
-        wprintw(get_window(), "%s", rowstr.c_str());
+        const size_t lineno = row+1; // index to line number conversion
+        
+        attron(COLOR_PAIR(PAIR_LINE_NO));
+        wprintw(get_window(), "%lu\t", lineno);
+        wprintw(get_window(), "%s\n", rowstr.c_str());
     }
     wrefresh(get_window());
 }
@@ -113,12 +127,19 @@ UI::Line_reader::Line_reader(Paper* paper, const int num_columns)
     wrefresh(get_window()); // to update the cursor pos
 }
 
+// remove trailing spaces from a string
+// trim from right
+std::string& rstrip(std::string& s, const char* t = " \t\n\r\f\v") {
+    s.erase(s.find_last_not_of(t) + 1);
+    return s;
+}
+
 std::string UI::Line_reader::read() {
     std::string line;
     for (int col = 0; col < num_columns; ++col) {
         line.push_back(static_cast<char>(mvwinch(get_window(), 0, col) & A_CHARTEXT));
     }
-    return line;
+    return rstrip(line);
 }
 
 void UI::Line_reader::clear() {

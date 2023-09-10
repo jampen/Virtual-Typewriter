@@ -29,24 +29,33 @@ namespace UI {
         virtual bool on_key_pressed(const chtype input) = 0;
     };
 
-    class Drawable {
-    public:
-        virtual void draw() = 0;
-    };
-
     class Key_event_loop {
     public:
         // This function blocks, and sends messages to the Key_inputtables on a key pressed
         // if the Key_inputtable returns TRUE then the key is considered to be 'consumed'
         void listen();
-        void add_listener(Key_inputtable* inputtable);
-        void remove_listener(Key_inputtable* inputtable);
-        void clear_listeners();
+
+        inline void add_listener(Key_inputtable* inputtable) { 
+            listeners.emplace(inputtable);
+        }
+    
+        inline void remove_listener(Key_inputtable* inputtable) { 
+            auto iter = listeners.find(inputtable);
+            if (iter != listeners.end()) {
+                listeners.erase(iter);
+            }
+        }
+
+        inline void clear_listeners() {
+            listeners.clear();
+        }
     private:
-        std::set<Key_inputtable*> inputtables;
+        std::set<Key_inputtable*> listeners;
     };
 
-    class Line_reader : public Resizeable, Key_inputtable, Drawable {
+    class Line_reader : 
+        public Resizeable,
+        public Key_inputtable {
     public:
         static constexpr int LINE_HEIGHT = 1;
 
@@ -54,7 +63,6 @@ namespace UI {
         inline WINDOW* get_window() { return window.get(); } 
         std::string read() const;   // Returns the line as a string, without any colors.
         void clear();               // Clear the line reader to blank
-        void draw() override;
         void resize(const Size new_size) override;
         bool on_key_pressed(const chtype key) override;
     private:

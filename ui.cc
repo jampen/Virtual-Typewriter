@@ -15,6 +15,23 @@ void UI::Window_deleter::operator()(WINDOW* window) {
     delwin(window);
 }
 
+// Impl of Key_event_loop
+
+void UI::Key_event_loop::listen() {
+    chtype ch;
+
+    while (ch = getch()) {
+        // Send the messages to each receving object
+        for (Key_inputtable* listener : listeners) {
+            if(listener->on_key_pressed(ch)) {
+                break;
+            }
+        }
+        //??? on_finish();
+    }  
+}
+
+
 // Impl of line_reader
 
 UI::Line_reader::Line_reader(const int num_columns)
@@ -32,11 +49,6 @@ void UI::Line_reader::clear() {
 }
 
 // Impl of abstract methods
-
-void UI::Line_reader::draw() {
-    wrefresh(get_window());
-}
-
 void UI::Line_reader::resize(const UI::Size new_size) {
     wresize(get_window(), new_size.num_rows, new_size.num_columns);
     wrefresh(get_window());

@@ -2,10 +2,11 @@
 
 int main() {
     UI::begin();
-
     UI::Line_reader reader;
-    reader.refresh();
 
+    //UI::KeyEventLoop ev;
+    //ev.add_targets();
+    
     int i;
     while (i = getch()) {
         if(i == KEY_F(1))

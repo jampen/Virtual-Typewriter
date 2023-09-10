@@ -82,6 +82,8 @@ namespace UI {
         size_t row_end{};
     };
 
+//    std::ostream& operator >> (std::ostream& os, Paper& paper);
+
     class Line_reader : 
         public Resizeable,
         public Key_inputtable {

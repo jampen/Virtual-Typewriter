@@ -99,6 +99,14 @@ void UI::Paper::on_line_entered(const std::string& line) {
 
 void UI::Paper::resize(const Size new_size) {
     this->size = size;
+    int max_y;
+    int max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    size.num_columns = max_x;
+    size.num_rows = max_y - PAPER_BEGIN_OFFSET - Line_reader::LINE_HEIGHT;
+    wresize(get_window(), size.num_rows, size.num_columns);
+    wmove(get_window(), 0, 0); // reset the cursor
+    wrefresh(get_window());     // update cursor pos
 }
 
 // Impl of Line_reader
@@ -141,8 +149,10 @@ void UI::Line_reader::clear() {
 // Impl of abstract methods
 void UI::Line_reader::resize(const UI::Size new_size) {
     num_columns = new_size.num_columns;
-    wresize(get_window(), new_size.num_rows, new_size.num_columns);
+    wresize(get_window(), 1, new_size.num_columns);
+    mvwin(get_window(), new_size.num_rows-LINE_HEIGHT, 0);
     wrefresh(get_window());
+    paper->resize(new_size);
 }
 
 UI::Key_input_response UI::Line_reader::on_key_pressed(const chtype key) {
@@ -168,6 +178,10 @@ UI::Key_input_response UI::Line_reader::on_key_pressed(const chtype key) {
     handled |= printable;
 
     switch (key) {
+        case KEY_RESIZE:
+            resize({getmaxy(stdscr), getmaxx(stdscr)});
+            return Key_input_response::Resized;
+
         // Handle special characters
         case KEY_BACKSPACE:
             waddch(get_window(), '\b');

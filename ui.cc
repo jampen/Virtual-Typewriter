@@ -20,11 +20,31 @@ void UI::Window_deleter::operator()(WINDOW* window) {
 
 void UI::Key_event_loop::listen() {
     chtype ch;
+    bool quit = false;
 
-    while (ch = getch()) {
+    while (!quit) {
+        ch = getch();
+        if (!ch) {
+            break;
+        }
+        quit = false;
+
         // Send the messages to each receving object
         for (Key_inputtable* listener : listeners) {
-            if(listener->on_key_pressed(ch)) {
+            const auto response = listener->on_key_pressed(ch);
+
+            if (response == Key_input_response::Refused) {
+                continue;
+            }
+
+            else if (response == Key_input_response::Accepted) {
+                break;
+            }
+
+            else if (response == Key_input_response::Submit) {
+                // TODO: impl submit actions
+            } else if (response == Key_input_response::Quit) {
+                quit = true;
                 break;
             }
         }
@@ -56,7 +76,12 @@ void UI::Line_reader::resize(const UI::Size new_size) {
     wrefresh(get_window());
 }
 
-bool UI::Line_reader::on_key_pressed(const chtype key) {
+UI::Key_input_response UI::Line_reader::on_key_pressed(const chtype key) {
+    if (key == '\n') {
+        // submit..
+        return Key_input_response::Submit;
+    }
+
     // handle special cases, such as backspace
     bool printable = isprint(key);
 
@@ -73,14 +98,18 @@ bool UI::Line_reader::on_key_pressed(const chtype key) {
         case KEY_BACKSPACE:
             waddch(get_window(), '\b');
             handled |= true;
+            break;
+
+        case KEY_F(1):
+            return Key_input_response::Quit;
     }
 
     // Only refresh if we made a change
     if (handled) {
         wrefresh(get_window());
-        return true;
+        return Key_input_response::Accepted;
     }
     
     // We were unable to handle this key, so move it on to someone else
-    return false;
+    return Key_input_response::Refused;
 }

@@ -25,16 +25,22 @@ namespace UI {
         virtual void resize(const Size new_size) = 0;
     };
 
+    enum class Key_input_response {
+        Accepted, // The key was accepted and made a change
+        Submit,   // The key caused a submit action.
+        Refused,  // The key was refused, and someone else should handle it
+        Quit,     // The user requests that the program should quit because of this key 
+    };
+
     class Key_inputtable {
     public:
         // This function is called when a key is pressed and the subclass is targeted
-        virtual bool on_key_pressed(const chtype input) = 0;
+        virtual Key_input_response on_key_pressed(const chtype input) = 0;
     };
 
     class Key_event_loop {
     public:
-        // This function blocks, and sends messages to the Key_inputtables on a key pressed
-        // if the Key_inputtable returns TRUE then the key is considered to be 'consumed'
+        // This function blocks, and sends messages to the Key_inputtables on a key pressed.
         void listen();
 
         inline void add_listener(Key_inputtable* inputtable) { 
@@ -67,7 +73,7 @@ namespace UI {
         std::string read() const;   // Returns the line as a string, without any colors.
         void clear();               // Clear the line reader to blank
         void resize(const Size new_size) override;
-        bool on_key_pressed(const chtype key) override;
+        Key_input_response on_key_pressed(const chtype key) override;
     private:
         Window window;
         int num_columns;

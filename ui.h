@@ -31,6 +31,7 @@ namespace UI {
         Submit,   // The key caused a submit action.
         Refused,  // The key was refused, and someone else should handle it
         Quit,     // The user requests that the program should quit because of this key 
+        Resized,  // The key caused a resize of the user
     };
 
     class Key_inputtable {

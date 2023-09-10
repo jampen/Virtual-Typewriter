@@ -69,11 +69,13 @@ namespace UI {
         Paper();
         void on_line_entered(const std::string& line);
         void resize(const Size new_size) override;
+        inline WINDOW* get_window() { return window.get(); }
 
     private:
         Window window;
         std::vector<std::string> rows;
         // Cursor cursor;
+        Size size;
     };
 
     class Line_reader : 
@@ -83,7 +85,7 @@ namespace UI {
         static constexpr int LINE_HEIGHT = 1;
         Line_reader(Paper* paper, const int num_columns = 80);
         inline WINDOW* get_window() { return window.get(); } 
-        std::string read() const;   // Returns the line as a string, without any colors.
+        std::string read();         // Returns the line as a string, without any colors.
         void clear();               // Clear the line reader to blank
         void resize(const Size new_size) override;
         Key_input_response on_key_pressed(const chtype key) override;

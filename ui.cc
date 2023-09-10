@@ -15,7 +15,6 @@ void UI::Window_deleter::operator()(WINDOW* window) {
     delwin(window);
 }
 
-
 // Impl of line_reader
 
 UI::Line_reader::Line_reader(const int num_columns)

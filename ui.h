@@ -22,7 +22,7 @@ namespace UI {
         virtual void resize(const Size new_size) = 0;
     };
 
-    class KeyInputtable {
+    class Key_inputtable {
     public:
         // This function is called when a key is pressed and the subclass is targeted
         virtual bool on_key_pressed(const chtype input) = 0;
@@ -33,7 +33,12 @@ namespace UI {
         virtual void draw() = 0;
     };
 
-    class Line_reader : public Resizeable, KeyInputtable, Drawable {
+    class Key_event_loop {
+
+    };
+
+
+    class Line_reader : public Resizeable, Key_inputtable, Drawable {
     public:
         static constexpr int LINE_HEIGHT = 1;
 

@@ -46,6 +46,7 @@ std::string UI::Line_reader::read() const {
 
 void UI::Line_reader::clear() {
     // stub
+    wclear(get_window());
 }
 
 // Impl of abstract methods
@@ -55,5 +56,7 @@ void UI::Line_reader::resize(const UI::Size new_size) {
 }
 
 bool UI::Line_reader::on_key_pressed(const chtype key) {
+    waddch(get_window(), key);
+    wrefresh(get_window());
     return true;
 }

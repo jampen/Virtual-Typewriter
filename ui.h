@@ -4,8 +4,10 @@
 #include <curses.h>
 
 namespace UI {
-    void begin();
-    void end();
+    // These functions must be called at the beginning & end of the program
+    // if not, the program will not work.
+    void begin(); // Begin curses mode
+    void end();   // End curses mode
 
     struct Window_deleter {
         void operator()(WINDOW* window);

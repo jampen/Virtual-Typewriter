@@ -3,7 +3,8 @@
 #include <curses.h>
 
 namespace UI {
-    void setup_curses();
+    void begin();
+    void end();
 
     struct Window_deleter {
         void operator()(WINDOW* window);

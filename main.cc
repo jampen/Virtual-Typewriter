@@ -14,13 +14,13 @@ int main(int argc, const char* argv[]) {
     UI::begin();
     UI::Paper paper;
 
-    {
+    { // If the user supplies a path to a file that already exists,
+      // then open it.
         std::ifstream file (path);
-        file >> paper; // Will do nothing if the file is not open
+        file >> paper; // Reads the file into paper, does nothing if the file is not open
     }
 
     UI::Line_reader reader(&paper);
-
     Ctrl::Quitter quitter;
     Ctrl::Saver saver(path, &paper);
 

@@ -11,7 +11,7 @@ namespace Ctrl {
         UI::Key_input_response on_key_pressed(const chtype key) override;
     private:
         std::string filename;
-        UI::Paper* paper;
+        UI::Paper* paper; 
     };
 
     class Quitter

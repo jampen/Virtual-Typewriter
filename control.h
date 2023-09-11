@@ -18,7 +18,7 @@ namespace Ctrl {
     : public UI::Key_inputtable
     {
     public:
-        static constexpr auto KEY = KEY_F(2);
+        static constexpr auto KEY = KEY_F(9);
         UI::Key_input_response on_key_pressed(const chtype key) override;
     };
 }

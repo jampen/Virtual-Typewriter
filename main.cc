@@ -23,6 +23,7 @@ int main(int argc, const char* argv[]) {
     UI::Line_reader reader(&paper);
     Ctrl::Quitter quitter;
     Ctrl::Saver saver(path, &paper);
+    reader.reset_cursor();
 
     UI::Key_event_loop loop;
     loop.add_listener(&reader);

@@ -102,6 +102,7 @@ namespace UI {
         void clear();               // Clear the line reader to blank
         void resize(const Size new_size) override;
         Key_input_response on_key_pressed(const chtype key) override;
+        void reset_cursor();
     private:
 
         Window window;

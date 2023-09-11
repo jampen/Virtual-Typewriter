@@ -208,3 +208,8 @@ UI::Key_input_response UI::Line_reader::on_key_pressed(const chtype key) {
     // We were unable to handle this key, so move it on to someone else
     return Key_input_response::Refused;
 }
+
+void UI::Line_reader::reset_cursor() {
+    wmove(get_window(), 0, 0);
+    wrefresh(get_window());
+}

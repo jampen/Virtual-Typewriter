@@ -37,6 +37,24 @@ UI::Key_input_response Ctrl::Clear_line::on_key_pressed(const chtype key) {
     }
 }
 
+// Impl for Line_remover
+
+Ctrl::Line_remover::Line_remover(UI::Paper* paper)
+:    paper(paper)
+{
+    if (paper == nullptr) throw std::invalid_argument("paper is nullptr");
+}
+
+UI::Key_input_response Ctrl::Line_remover::on_key_pressed(const chtype key) {
+    if (key == KEY) {
+        paper->remove_line(paper->get_rows().size()-1);
+        return UI::Key_input_response::Accepted;
+    } else {
+        return UI::Key_input_response::Refused;
+    }
+}
+
+
 
 // Impl for Quitter
 

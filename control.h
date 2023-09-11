@@ -25,6 +25,17 @@ namespace Ctrl {
         UI::Line_reader* reader;        
     };
 
+    class Line_remover 
+    : public UI::Key_inputtable
+    {
+    public:
+        static constexpr auto KEY = KEY_F(3);
+        Line_remover(UI::Paper* paper);
+        UI::Key_input_response on_key_pressed(const chtype key) override;
+    private:
+        UI::Paper* paper;
+    }
+
     class Quitter
     : public UI::Key_inputtable
     {

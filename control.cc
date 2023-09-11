@@ -47,7 +47,9 @@ Ctrl::Line_remover::Line_remover(UI::Paper* paper)
 
 UI::Key_input_response Ctrl::Line_remover::on_key_pressed(const chtype key) {
     if (key == KEY) {
-        paper->remove_line(paper->get_rows().size()-1);
+        if (paper->get_rows().size() != 0) { // prevent underflow
+            paper->remove_row(paper->get_rows().size()-1); // TODO: use line reader insert row (to be implemented)
+        }
         return UI::Key_input_response::Accepted;
     } else {
         return UI::Key_input_response::Refused;

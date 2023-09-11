@@ -75,7 +75,7 @@ namespace UI {
         void resize(const Size new_size) override;
         inline WINDOW* get_window() { return window.get(); }
         inline const std::vector<std::string>& get_rows() const { return rows;}
-
+        void remove_row(const std::size_t row_index);
     private:
         void draw();
 

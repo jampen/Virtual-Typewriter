@@ -34,7 +34,7 @@ namespace Ctrl {
         UI::Key_input_response on_key_pressed(const chtype key) override;
     private:
         UI::Paper* paper;
-    }
+    };
 
     class Quitter
     : public UI::Key_inputtable

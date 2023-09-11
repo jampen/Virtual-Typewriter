@@ -25,14 +25,16 @@ int main(int argc, const char* argv[]) {
     // Controls
     Ctrl::Quitter quitter;
     Ctrl::Clear_line line_clearer(&reader);
+    Ctrl::Line_remover line_remover(&paper);
     Ctrl::Saver saver(path, &paper);
-    
+
     reader.reset_cursor();
 
     UI::Key_event_loop loop;
     loop.add_listener(&reader);
     loop.add_listener(&saver);
     loop.add_listener(&line_clearer);
+    loop.add_listener(&line_remover);
     loop.add_listener(&quitter);
     loop.listen();
 

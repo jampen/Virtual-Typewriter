@@ -87,6 +87,13 @@ void UI::Paper::resize(const Size new_size) {
     draw(); // Needed to re-adjust the screen
 }
 
+void UI::Paper::remove_row(const std::size_t row_index) {
+    if (row_index >= rows.size()) return;
+    --row_end;
+    rows.erase(rows.begin() + row_index);
+    draw();
+}
+
 void UI::Paper::draw() {
     // draw paper
     wclear(get_window());
@@ -95,11 +102,9 @@ void UI::Paper::draw() {
     if (cursor_begin_row < 0) cursor_begin_row = 0;
 
     wmove(get_window(), cursor_begin_row, 0); 
-    
-    // Setup colors
     wrefresh(get_window()); // refresh cursor pos
     
-    for (size_t row = row_begin; row < row_end; ++row) {
+    for (std::size_t row = row_begin; row < row_end; ++row) {
         const auto& rowstr = rows.at(row);
         wprintw(get_window(), "%s\n", rowstr.c_str());
     }

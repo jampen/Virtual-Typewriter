@@ -74,40 +74,54 @@ void UI::Paper::on_line_entered(const std::string& line) {
     if (view_row_diff == size.num_rows) {
         ++row_begin;
     }
+
+    // Display latest contents    
+    draw();
+}
+
+void UI::Paper::resize(const Size new_size) {
+    size.num_columns = new_size.num_columns;
+    size.num_rows = new_size.num_rows - PAPER_BEGIN_OFFSET;
+    wresize(get_window(), size.num_rows, size.num_columns);
+    wmove(get_window(), 0, 0); // Reset the cursor
+    draw(); // Needed to re-adjust the screen
+}
+
+void UI::Paper::draw() {
     // draw paper
     wclear(get_window());
 
     long cursor_begin_row = (getmaxy(get_window()) - rows.size());
     if (cursor_begin_row < 0) cursor_begin_row = 0;
 
-    
     wmove(get_window(), cursor_begin_row, 0); 
     
     // Setup colors
     wrefresh(get_window()); // refresh cursor pos
-
     
     for (size_t row = row_begin; row < row_end; ++row) {
         const auto& rowstr = rows.at(row);
-        const size_t lineno = row+1; // index to line number conversion
-        wprintw(get_window(), "%lu\t", lineno);
         wprintw(get_window(), "%s\n", rowstr.c_str());
     }
 
     wrefresh(get_window()); // display to screen
 }
 
-void UI::Paper::resize(const Size new_size) {
-    this->size = size;
-    int max_y;
-    int max_x;
-    getmaxyx(stdscr, max_y, max_x);
-    size.num_columns = max_x;
-    size.num_rows = max_y - PAPER_BEGIN_OFFSET - Line_reader::LINE_HEIGHT;
-    wresize(get_window(), size.num_rows, size.num_columns);
-    wmove(get_window(), 0, 0); // reset the cursor
-    wrefresh(get_window());     // update cursor pos
+std::istream& UI::operator >> (std::istream& is, Paper& paper) {
+    for (std::string line; std::getline(is, line, '\n'); ) {
+        paper.on_line_entered(line);
+    }
+    return is;
 }
+
+std::ostream& UI::operator << (std::ostream& os, const Paper& paper) {
+    const auto lines = paper.get_rows();
+    for (const auto& line : lines) {
+        os << line << '\n';
+    }
+    return os;
+}
+
 
 // Impl of Line_reader
 
@@ -116,14 +130,10 @@ UI::Line_reader::Line_reader(Paper* paper, const int num_columns)
     paper(paper),
     window(newwin(LINE_HEIGHT, num_columns, 0, 0))
 {
-    resize(Size{1, num_columns});
-    // Move the line reader to the bottom of the screen
     int maxx;
     int maxy;
     getmaxyx(stdscr, maxy, maxx);
-    mvwin(get_window(), maxy-LINE_HEIGHT, 0);
-    wmove(get_window(), 0, 0); // reset the cursor
-    wrefresh(get_window()); // to update the cursor pos
+    resize(Size{maxy, maxx});
 }
 
 // remove trailing spaces from a string
@@ -187,9 +197,6 @@ UI::Key_input_response UI::Line_reader::on_key_pressed(const chtype key) {
             waddch(get_window(), '\b');
             handled |= true;
             break;
-
-        case KEY_F(1):
-            return Key_input_response::Quit;
     }
 
     // Only refresh if we made a change

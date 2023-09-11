@@ -2,6 +2,7 @@
 #include <memory>
 #include <set>
 #include <vector>
+#include <istream> // for input streams
 #include <curses.h>
 
 namespace UI {
@@ -73,8 +74,11 @@ namespace UI {
         void on_line_entered(const std::string& line);
         void resize(const Size new_size) override;
         inline WINDOW* get_window() { return window.get(); }
+        inline const std::vector<std::string>& get_rows() const { return rows;}
 
     private:
+        void draw();
+
         Window window;
         std::vector<std::string> rows;
         Size size;
@@ -82,7 +86,10 @@ namespace UI {
         size_t row_end{};
     };
 
-//    std::ostream& operator >> (std::ostream& os, Paper& paper);
+    // Stream into the paper, for reading lines.
+    std::istream& operator >> (std::istream& is, Paper& paper);
+    // Stream into the file, for writing lines
+    std::ostream& operator << (std::ostream& os, const Paper& paper);
 
     class Line_reader : 
         public Resizeable,
@@ -96,6 +103,7 @@ namespace UI {
         void resize(const Size new_size) override;
         Key_input_response on_key_pressed(const chtype key) override;
     private:
+
         Window window;
         int num_columns;
         Paper* paper;

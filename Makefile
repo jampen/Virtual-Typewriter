@@ -5,7 +5,7 @@ COPTS = -lncurses
 TARGET = a.out
 
 # List of source files
-SRCS = main.cc ui.cc
+SRCS = main.cc ui.cc control.cc
 
 # Generate a list of object files from source files
 OBJS = $(SRCS:.cc=.o)
